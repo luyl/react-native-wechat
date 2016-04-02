@@ -321,6 +321,21 @@ RCT_EXPORT_METHOD(shareToSession:(NSDictionary *)data
     callback(@[success ? [NSNull null] : INVOKE_FAILED]);
 }
 
+#pragma mark - wx pay
+
+RCT_EXPORT_METHOD(sendPayRequest:(NSDictionary *)data
+                  :(RCTResponseSenderBlock)callback)
+{
+    PayReq *req = [[PayReq alloc] init];
+    req.partnerId = data[@"partnerid"];
+    req.prepayId = data[@"prepayid"];
+    req.package = data[@"package"];
+    req.nonceStr = data[@"noncestr"];
+    req.timeStamp = data[@"timestamp"];
+    req.sign = data[@"sign"];
+    callback(@[[WXApi sendReq:req] ? [NSNull null] : INVOKE_FAILED]);
+}
+
 #pragma mark - wx callback
 
 -(void) onReq:(BaseReq*)req
@@ -357,7 +372,15 @@ RCT_EXPORT_METHOD(shareToSession:(NSDictionary *)data
 	    else {
 	        [self.bridge.eventDispatcher sendDeviceEventWithName:@"WeChat_Resp" body:body];
 	    }
-	}
+	} else if ([resp isKindOfClass:[PayResp class]]) {
+      PayResp *r = (PayResp *)resp;
+      NSMutableDictionary *body = @{@"errCode":@(r.errCode)}.mutableCopy;
+      body[@"errStr"] = r.errStr;
+      body[@"returnKey"] = r.returnKey;
+      body[@"type"] = @"SendPay.Resp";
+
+      [self.bridge.eventDispatcher sendDeviceEventWithName:@"WeChat_Resp" body:body];
+  }
 }
 
 @end

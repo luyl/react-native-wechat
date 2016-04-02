@@ -75,6 +75,8 @@ const nativeShareToSession = wrapApi(WeChat.shareToSession);
 
 const nativeSendAuthRequest = wrapApi(WeChat.sendAuthRequest);
 
+const nativeSendPayRequest = wrapApi(WeChat.sendPayRequest);
+
 export function sendAuthRequest(scopes, state) {
   // Generate a random, unique state if not provided.
   let _scopes = scopes || 'snsapi_userinfo';
@@ -91,4 +93,8 @@ export function shareToTimeline(data) {
 
 export function shareToSession(data) {
   return nativeShareToSession(data);
+}
+
+export function sendPayRequest(data) {
+  return nativeSendPayRequest(data);
 }
