@@ -114,6 +114,43 @@ public class WXEntryActivity extends Activity{
 </manifest>
 ```
 
+- （Options）If you need to support WXPay, create a class named `WXEntryActivity` in the package named 'wxapi'.
+
+```java
+package your.package.wxapi;
+
+import android.app.Activity;
+import android.os.Bundle;
+
+import com.theweflex.react.WeChatModule;
+
+public class WXPayEntryActivity extends Activity{
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        WeChatModule.handleIntent(getIntent());
+        finish();
+    }
+}
+```
+
+also add activity declare in your AndroidManifest.xml
+
+```
+<manifest>
+  ...
+  <application>
+    ...
+    <!-- 微信Activity -->
+    <activity
+      android:name=".wxapi.WXPayEntryActivity"
+      android:label="@string/app_name"
+      android:exported="true"
+      />
+  </application>
+</manifest>
+```
+
 - Add these lines to 'proguard-rules.pro':
 
 ```
@@ -168,6 +205,21 @@ Send authentication request.
 - {Array|String} `scope` Scopes of auth request.
 - {String} `state` the state of OAuth2
 - returns {Promise}
+
+### sendPayRequest(data)
+
+Send Pay request
+
+- {Object} `data` containerthe message to send
+    - {String} `partnerId`
+    - {String} `prepayId`
+    - {String} `nonceStr`
+    - {String} `timeStamp`
+    - {String} `package`
+    - {String} `sign`
+- returns {Promise}
+
+visit [https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_12&index=2](this docs) to get more details of the param `data`:
 
 #### shareToTimeline(data)
 
@@ -290,6 +342,12 @@ Receive result for sendAuthRequest
 #### SendMessageToWX.Resp
 
 Receive result for shareToTimeline and shareToSession
+    - errCode {int} be 0 if auth successed.
+    - errStr {String} Error message if any error occured.
+
+#### SendPay.Resp
+
+Receive result for sendPayRequest
     - errCode {int} be 0 if auth successed.
     - errStr {String} Error message if any error occured.
 
