@@ -46,6 +46,8 @@ import com.tencent.mm.sdk.modelmsg.WXMusicObject;
 import com.tencent.mm.sdk.modelmsg.WXTextObject;
 import com.tencent.mm.sdk.modelmsg.WXVideoObject;
 import com.tencent.mm.sdk.modelmsg.WXWebpageObject;
+import com.tencent.mm.sdk.modelpay.PayReq;
+import com.tencent.mm.sdk.modelpay.PayResp;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
@@ -98,6 +100,7 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
 
     @ReactMethod
     public void registerApp(String appid, Callback callback) {
+        this.appId = appid;
         api = WXAPIFactory.createWXAPI(this.getReactApplicationContext().getBaseContext(), appid, true);
         callback.invoke(api.registerApp(appid) ? null : INVOKE_FAILED);
     }
@@ -166,6 +169,23 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
             return;
         }
         _share(SendMessageToWX.Req.WXSceneSession, data, callback);
+    }
+
+    @ReactMethod
+    public void sendPayRequest(ReadableMap data, Callback callback){
+        if (api == null) {
+            callback.invoke(NOT_REGISTERED);
+            return;
+        }
+        PayReq req = new PayReq();
+        req.appId = this.appId;
+        req.partnerId = data.getString("partnerId");
+        req.prepayId = data.getString("prepayId");
+        req.nonceStr = data.getString("nonceStr");
+        req.timeStamp = data.getString("timeStamp");
+        req.packageValue = data.getString("package");
+        req.sign = data.getString("sign");
+        callback.invoke(api.sendReq(req) ? null : INVOKE_FAILED);        
     }
 
     private void _share(final int scene, final ReadableMap data, final Callback callback){
@@ -429,6 +449,8 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         } else if (baseResp instanceof SendMessageToWX.Resp){
             SendMessageToWX.Resp resp = (SendMessageToWX.Resp)(baseResp);
             map.putString("type", "SendMessageToWX.Resp");
+        } else if (baseResp instanceof PayResp) {
+            map.putString("type", "SendPay.Resp");
         }
 
         this.getReactApplicationContext()

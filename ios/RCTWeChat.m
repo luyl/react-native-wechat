@@ -327,11 +327,11 @@ RCT_EXPORT_METHOD(sendPayRequest:(NSDictionary *)data
                   :(RCTResponseSenderBlock)callback)
 {
     PayReq *req = [[PayReq alloc] init];
-    req.partnerId = data[@"partnerid"];
-    req.prepayId = data[@"prepayid"];
+    req.partnerId = data[@"partnerId"];
+    req.prepayId = data[@"prepayId"];
     req.package = data[@"package"];
-    req.nonceStr = data[@"noncestr"];
-    req.timeStamp = data[@"timestamp"];
+    req.nonceStr = data[@"nonceStr"];
+    req.timeStamp = data[@"timeStamp"];
     req.sign = data[@"sign"];
     callback(@[[WXApi sendReq:req] ? [NSNull null] : INVOKE_FAILED]);
 }
