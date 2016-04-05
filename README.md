@@ -219,7 +219,7 @@ Send Pay request
     - {String} `sign`
 - returns {Promise}
 
-visit [https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_12&index=2](this docs) to get more details of the param `data`:
+visit [this docs](https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_12&index=2) to get more details of the param `data`:
 
 #### shareToTimeline(data)
 
